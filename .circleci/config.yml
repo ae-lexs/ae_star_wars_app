@@ -3,7 +3,7 @@ version: 2.1
 executors:
   node:
     docker:
-      - image: circleci/node:16.15.1
+      - image: circleci/node:14.17.3
 
 commands:
   install_dependencies:

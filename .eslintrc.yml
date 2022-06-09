@@ -13,4 +13,11 @@ parserOptions:
 plugins:
   - react
   - '@typescript-eslint'
-rules: {}
+rules:
+  'import/prefer-default-export': off
+  'import/extensions': off
+  'import/no-unresolved': off
+  'react/jsx-filename-extension':
+    - error
+    - extensions:
+        - '.tsx'

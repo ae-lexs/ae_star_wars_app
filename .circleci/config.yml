@@ -1,0 +1,72 @@
+version: 2.1
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:16.15.1
+
+commands:
+  install_dependencies:
+    description: 'Install the Dev Dependencies required for the jobs.'
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      - run:
+          name: 'Install Dev Dependencies'
+          command: npm i -D
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+
+jobs:
+  generate_release:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: 'Generate Release'
+          command: |
+            sudo npm i -g @semantic-release/changelog @semantic-release/git semantic-release
+            semantic-release
+
+  run_linter:
+    executor: node
+    steps:
+      - checkout
+      - install_dependencies
+      - run:
+          name: 'Run Linter'
+          command: npm run lint
+
+  run_tests:
+    executor: node
+    steps:
+      - checkout
+      - install_dependencies
+      - run:
+          name: 'Run Tests'
+          command: npm test
+
+workflows:
+  version: 2
+
+  development:
+    jobs:
+      - run_linter:
+          filters:
+            branches:
+              only: main
+      - run_tests:
+          filters:
+            branches:
+              only: main
+      - generate_release:
+          requires:
+            - run_linter
+            - run_tests
+          filters:
+            branches:
+              only: main

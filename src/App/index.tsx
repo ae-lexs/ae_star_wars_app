@@ -9,8 +9,10 @@ function App() {
   const [people, setPeople] = useState<Array<IPeople>>([]);
 
   useEffect(() => {
-    new PeopleHandler(new SWAPI()).getPerBatch()
-      .then((peopleBatch) => setPeople(peopleBatch)).catch();
+    new PeopleHandler(new SWAPI())
+      .getPerBatch()
+      .then((peopleBatch) => setPeople(peopleBatch))
+      .catch();
   }, []);
 
   if (people.length === 0) {
